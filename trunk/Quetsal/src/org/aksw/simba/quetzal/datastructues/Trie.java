@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.aksw.simba.quetzal.core.QuetzalSourceSelection;
+import org.aksw.simba.quetzal.core.TBSSSourceSelection;
 /**
  * Trie data structure
  * @author Saleem
@@ -159,7 +159,7 @@ public class Trie {
 			//if(auth.equals("http://sdow2008.semanticweb.org/"));
 			//  	System.out.println(uRIs);
 			Trie.constructTrie(uRIs, branchLimit);
-			uris = QuetzalSourceSelection.getUnion(uris,(ArrayList<String>) getRoot2StopingNodePaths(TrieNode.root,branchLimit));
+			uris = TBSSSourceSelection.getUnion(uris,(ArrayList<String>) getRoot2StopingNodePaths(TrieNode.root,branchLimit));
 			//System.out.println("Authority: "+auth+", LCP:"+lcp);
 
 		}

@@ -18,17 +18,17 @@ import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.sparql.SPARQLRepository;
 
 /**
- *  Generate Quetzal Summaries for a set of federation members (SPARQL endpoints)
+ *  Generate Quetzal-TBSS Summaries for a set of federation members (SPARQL endpoints)
  *  @author saleem
  */
-public class SummariesGenerator {
+public class TBSSSummariesGenerator {
 	public static  BufferedWriter bw ;
 	/**
 	 * initialize input information for data summaries generation
 	 * @param location Directory location of the resulting FedSummaries file (i.e. location/FedSum.n3)
 	 * @throws IOException IO Exceptions
 	 */
-	public SummariesGenerator(String location) throws IOException 
+	public TBSSSummariesGenerator(String location) throws IOException 
 	{
 		bw= new BufferedWriter(new FileWriter(new File(location))); //--name/location where the summaries file will be stored
 		bw.append("@prefix ds:<http://aksw.org/fedsum/>.");
@@ -280,7 +280,7 @@ public class SummariesGenerator {
 		}
 		repo.getConnection().close();
 		//objAuthorities.addAll(Prefix.getLCPs(authGroups));
-		objAuthorities = QuetzalSourceSelection.getUnion(objAuthorities,Trie.getAllBranchingURIs(authGroups, branchLimit));
+		objAuthorities = TBSSSourceSelection.getUnion(objAuthorities,Trie.getAllBranchingURIs(authGroups, branchLimit));
 		if(!objAuthorities.isEmpty())
 		{
 			bw.newLine();

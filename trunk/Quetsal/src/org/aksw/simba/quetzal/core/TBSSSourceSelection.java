@@ -52,11 +52,11 @@ import com.fluidops.fedx.util.QueryStringUtil;
  * @author Saleem
  *
  */
-public class QuetzalSourceSelection {
+public class TBSSSourceSelection {
 
 	public Map<HyperEdge,StatementPattern> hyperEdgeToStmt = new HashMap<HyperEdge,StatementPattern>(); //Hyper edges to Triple pattern Map
 	public Map<Integer,HashSet<Vertex>> DNFHyperVertices = new HashMap<Integer,HashSet<Vertex>>(); //Map of vertices in different DNF hypergraphs
-	public static Logger log = Logger.getLogger(QuetzalSourceSelection.class);
+	public static Logger log = Logger.getLogger(TBSSSourceSelection.class);
 
 	protected final List<Endpoint> endpoints;
 	protected final Cache cache;
@@ -68,7 +68,7 @@ public class QuetzalSourceSelection {
 	 * @param cache cache
 	 * @param query SPARQL query
 	 */
-	public QuetzalSourceSelection(List<Endpoint> endpoints, Cache cache, String query) {
+	public TBSSSourceSelection(List<Endpoint> endpoints, Cache cache, String query) {
 		this.endpoints = endpoints;
 		this.cache = cache;
 		this.queryInfo = new QueryInfo(query,null);
@@ -1250,11 +1250,11 @@ public class QuetzalSourceSelection {
 		 * @param tasks Set of SPARQL ASK tasks
 		 * @param cache Cache
 		 */
-		public static void run(QuetzalSourceSelection hibiscusSourceSelection, List<CheckTaskPair> tasks, Cache cache) {
+		public static void run(TBSSSourceSelection hibiscusSourceSelection, List<CheckTaskPair> tasks, Cache cache) {
 			new SourceSelectionExecutorWithLatch(hibiscusSourceSelection).executeRemoteSourceSelection(tasks, cache);
 		}		
 
-		private final QuetzalSourceSelection sourceSelection;
+		private final TBSSSourceSelection sourceSelection;
 		private ControlledWorkerScheduler<BindingSet> scheduler = FederationManager.getInstance().getJoinScheduler();
 		private CountDownLatch latch;
 		private boolean finished=false;
@@ -1262,7 +1262,7 @@ public class QuetzalSourceSelection {
 		protected List<Exception> errors = new ArrayList<Exception>();
 
 
-		private SourceSelectionExecutorWithLatch(QuetzalSourceSelection hibiscusSourceSelection) {
+		private SourceSelectionExecutorWithLatch(TBSSSourceSelection hibiscusSourceSelection) {
 			this.sourceSelection = hibiscusSourceSelection;
 		}
 
@@ -1371,7 +1371,7 @@ public class QuetzalSourceSelection {
 
 				boolean hasResults = t.hasStatements(stmt, conn, EmptyBindingSet.getInstance());
 
-				QuetzalSourceSelection sourceSelection = control.sourceSelection;
+				TBSSSourceSelection sourceSelection = control.sourceSelection;
 				CacheEntry entry = CacheUtils.createCacheEntry(endpoint, hasResults);
 				sourceSelection.cache.updateEntry( new SubQuery(stmt), entry);
 
