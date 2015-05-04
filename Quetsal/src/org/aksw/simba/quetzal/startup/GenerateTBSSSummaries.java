@@ -4,16 +4,16 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import org.aksw.simba.quetzal.core.SummariesGenerator;
+import org.aksw.simba.quetzal.core.TBSSSummariesGenerator;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.QueryEvaluationException;
 import org.openrdf.repository.RepositoryException;
 
 /**
- * Generate Hibiscus summaries for a set of SPARQL endpoints
+ * Generate TBSS summaries for a set of SPARQL endpoints
  * @author Saleem
  */
-public class GenerateSummaries {
+public class GenerateTBSSSummaries {
 	
 	public static void main(String[] args) throws IOException, RepositoryException, MalformedQueryException, QueryEvaluationException {
 	List<String> endpoints = 	(Arrays.asList(
@@ -42,7 +42,7 @@ public class GenerateSummaries {
     
 	String outputFile = "summaries\\quetzal-b10.n3";
 	String namedGraph = "http://aksw.org/fedbench/";  //can be null. in that case all graph will be considered 
-	SummariesGenerator generator = new SummariesGenerator(outputFile);
+	TBSSSummariesGenerator generator = new TBSSSummariesGenerator(outputFile);
 	long startTime = System.currentTimeMillis();
 	int branchLimit =4;
 	generator.generateSummaries(endpoints,namedGraph,branchLimit);

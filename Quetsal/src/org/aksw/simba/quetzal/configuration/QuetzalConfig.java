@@ -140,7 +140,7 @@ public class QuetzalConfig {
 		}
 		try {
 			con.add(file, "aksw.org.simba", RDFFormat.N3);
-		} catch (RDFParseException e) {
+			} catch (RDFParseException e) {
 			e.printStackTrace();
 		} catch (RepositoryException e) {
 			e.printStackTrace();

@@ -22,7 +22,7 @@ public class SummariesUpdate {
 	public static void updateIndexAtFixedTime(final List<String> lstEndPoints, Date date, final String outputFile, final int branchLimit) {
 		Timer timer = new Timer();
 		timer.schedule(new TimerTask() {public void run() { 	 try {
-			SummariesGenerator generator = new SummariesGenerator(outputFile);
+			TBSSSummariesGenerator generator = new TBSSSummariesGenerator(outputFile);
 			long startTime = System.currentTimeMillis();
 			generator.generateSummaries(lstEndPoints,null, branchLimit);
 			System.out.println("Index is secessfully updated to "+ outputFile);
@@ -47,7 +47,7 @@ public class SummariesUpdate {
 	public static void updateIndexAtFixedRate(final List<String> lstEndPoints, long interval, final String outputFile, final int branchLimit) {
 		Timer timer = new Timer();
 		timer.scheduleAtFixedRate(new TimerTask() {public void run() { 	 try {
-			SummariesGenerator generator = new SummariesGenerator(outputFile);
+			TBSSSummariesGenerator generator = new TBSSSummariesGenerator(outputFile);
 			long startTime = System.currentTimeMillis();
 			generator.generateSummaries(lstEndPoints,null,branchLimit);
 			System.out.println("Index is secessfully updated to "+ outputFile);
