@@ -6,7 +6,7 @@ package org.aksw.simba.quetzal.startup
 2. Class ExecuteTBSSQuery      (Execute Quetsal-TBSS queries)
 
 You just need to enable the DAW flag in both of the execution in order to provide duplicate-aware aware functionality. 
-For now we have disabled the query execution, thus if you directly run the the above files it will print the source selection results. 
+For now we have disabled the query execution, thus if you directly run the above files it will print the source selection results. 
 If you want to run complete query then just remove the comment from //    count =  executeQuery(query,bgpGroups,stmtToSources,repo); . 
 Note In order to run queries, you need to start all the required FedBench SPARQL endpoints and replace the endpoints URLs in the corresponding summaries. 
 
