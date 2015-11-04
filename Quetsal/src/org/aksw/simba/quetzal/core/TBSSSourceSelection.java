@@ -376,7 +376,7 @@ public class TBSSSourceSelection {
 		{
 			if(sa.equals("null") && oa.equals("null"))
 			{
-				queryString = "Prefix ds:<http://aksw.org/fedsum/> "
+				queryString = "Prefix ds:<http://aksw.org/quetsal/> "
 						+ "SELECT  Distinct ?url "
 						+ " WHERE {?s ds:url ?url . "
 						+ " 		?s ds:capability ?cap . "
@@ -386,25 +386,25 @@ public class TBSSSourceSelection {
 			}
 			else if (!sa.equals("null") && !oa.equals("null"))
 			{
-				queryString = "Prefix ds:<http://aksw.org/fedsum/> "
+				queryString = "Prefix ds:<http://aksw.org/quetsal/> "
 						+ "SELECT  Distinct ?url "
 						+ " WHERE {?s ds:url ?url . "
 						+ " 		?s ds:capability ?cap . "
 						+ "		   ?cap ds:predicate <" + p + "> . "
-						+ "?cap ds:sbjAuthority  ?sbjAuth . "
-						+ "?cap ds:objAuthority  ?objAuth . "
+						+ "?cap ds:sbjPrefix  ?sbjAuth . "
+						+ "?cap ds:objPrefix  ?objAuth . "
 						+ "FILTER REGEX(STR(?sbjAuth), \"" +sa + "\", \"i\") "
 						+ "FILTER REGEX(STR(?objAuth), \"" +oa + "\", \"i\") "
 						+ "}" ;	
 			}
 			else if (!sa.equals("null") && oa.equals("null"))
 			{
-				queryString = "Prefix ds:<http://aksw.org/fedsum/> "
+				queryString = "Prefix ds:<http://aksw.org/quetsal/> "
 						+ "SELECT  Distinct ?url "
 						+ " WHERE {?s ds:url ?url . "
 						+ "?s ds:capability ?cap . "
 						+ "?cap ds:predicate <" + p + "> . "
-						+ "?cap ds:sbjAuthority  ?sbjAuth ."
+						+ "?cap ds:sbjPrefix  ?sbjAuth ."
 						+ "FILTER REGEX(STR(?sbjAuth), \"" +sa + "\", \"i\") "
 						+ "}"
 						;	
@@ -412,12 +412,12 @@ public class TBSSSourceSelection {
 			}
 			else if (sa.equals("null") && !oa.equals("null"))
 			{
-				queryString = "Prefix ds:<http://aksw.org/fedsum/> "
+				queryString = "Prefix ds:<http://aksw.org/quetsal/> "
 						+ "SELECT  Distinct ?url "
 						+ " WHERE {?s ds:url ?url . "
 						+ "?s ds:capability ?cap . "
 						+ "?cap ds:predicate <" + p + "> . "
-						+ "?cap ds:objAuthority  ?objAuth . "
+						+ "?cap ds:objPrefix  ?objAuth . "
 						+ "FILTER REGEX(STR(?objAuth), \"" +oa + "\", \"i\") "
 
 								+ "}" ;	
@@ -428,33 +428,33 @@ public class TBSSSourceSelection {
 		{
 			if (!sa.equals("null") && !oa.equals("null"))
 			{
-				queryString = "Prefix ds:<http://aksw.org/fedsum/> "
+				queryString = "Prefix ds:<http://aksw.org/quetsal/> "
 						+ "SELECT  Distinct ?url "
 						+ " WHERE {?s ds:url ?url . "
 						+ " 		?s ds:capability ?cap . "
-						+ "?cap ds:sbjAuthority  ?sbjAuth . "
-						+ "?cap ds:objAuthority  ?objAuth . "
+						+ "?cap ds:sbjPrefix  ?sbjAuth . "
+						+ "?cap ds:objPrefix  ?objAuth . "
 						+ "FILTER REGEX(STR(?sbjAuth), \"" +sa + "\", \"i\") "
 						+ "FILTER REGEX(STR(?objAuth), \"" +oa + "\", \"i\") }";	
 			}
 			else if (!sa.equals("null") && oa.equals("null"))
 			{
-				queryString = "Prefix ds:<http://aksw.org/fedsum/> "
+				queryString = "Prefix ds:<http://aksw.org/quetsal/> "
 						+ "SELECT  Distinct ?url "
 						+ " WHERE {?s ds:url ?url . "
 						+ " 		?s ds:capability ?cap . "
-						+ "?cap ds:sbjAuthority  ?sbjAuth ."
+						+ "?cap ds:sbjPrefix  ?sbjAuth ."
 						+ "FILTER REGEX(STR(?sbjAuth), \"" +sa + "\", \"i\") "
 						+ "}"
 						;	
 			}
 			else if (sa.equals("null") && !oa.equals("null"))
 			{
-				queryString = "Prefix ds:<http://aksw.org/fedsum/> "
+				queryString = "Prefix ds:<http://aksw.org/quetsal/> "
 						+ "SELECT  Distinct ?url "
 						+ " WHERE {?s ds:url ?url . "
 						+ " 		?s ds:capability ?cap . "
-						+ "?cap ds:objAuthority  ?objAuth . "
+						+ "?cap ds:objPrefix  ?objAuth . "
 						+ "FILTER REGEX(STR(?objAuth), \"" +oa + "\", \"i\") "
 
 								+ "}" ;	
@@ -474,12 +474,12 @@ public class TBSSSourceSelection {
 	 */
 	public void FedSumClassLookup(StatementPattern stmt, String p, String o) throws RepositoryException, MalformedQueryException, QueryEvaluationException {
 
-		String  queryString = "Prefix ds:<http://aksw.org/fedsum/> "
+		String  queryString = "Prefix ds:<http://aksw.org/quetsal/> "
 				+ "SELECT  Distinct ?url "
 				+ " WHERE {?s ds:url ?url. "
 				+ " 		?s ds:capability ?cap. "
 				+ "		   ?cap ds:predicate <" + p + ">."
-				+ "?cap ds:objAuthority  <" + o + "> }" ;
+				+ "?cap ds:objPrefix  <" + o + "> }" ;
 		TupleQuery tupleQuery = QuetzalConfig.con.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
 		TupleQueryResult result = tupleQuery.evaluate();
 		while(result.hasNext())
@@ -975,52 +975,52 @@ public class TBSSSourceSelection {
 		//------------------------------------------------
 		if(!p.equals("null")) // if predicate is bound
 		{
-			queryString = "Prefix ds:<http://aksw.org/fedsum/> "
+			queryString = "Prefix ds:<http://aksw.org/quetsal/> "
 					+ "SELECT  DISTINCT ?sbjAuth "
 					+ " WHERE {?s ds:url <" + endPointUrl+">. "
 					+ " 		?s ds:capability ?cap."
 					+ "        ?cap ds:predicate <"+p+">."
-					+ "?cap ds:sbjAuthority  ?sbjAuth. }" ;	
+					+ "?cap ds:sbjPrefix  ?sbjAuth. }" ;	
 		}
 		else //predicate is not bound
 		{
 			if(sa.equals("null") && oa.equals("null"))  //and subject , object are not bound
 			{
-				queryString = "Prefix ds:<http://aksw.org/fedsum/> "
+				queryString = "Prefix ds:<http://aksw.org/quetsal/> "
 						+ "SELECT  Distinct ?sbjAuth "
 						+ " WHERE {?s ds:url <" + endPointUrl+">. "
 						+ " 		?s ds:capability ?cap."
-						+ "?cap ds:sbjAuthority  ?sbjAuth. }" ;
+						+ "?cap ds:sbjPrefix  ?sbjAuth. }" ;
 			}
 			else if(!sa.equals("null") && !oa.equals("null")) //and subject, object are bound
 			{
-				queryString = "Prefix ds:<http://aksw.org/fedsum/> "
+				queryString = "Prefix ds:<http://aksw.org/quetsal/> "
 						+ "SELECT  Distinct ?sbjAuth "
 						+ " WHERE {?s ds:url <" + endPointUrl+">. "
 						+ " 		?s ds:capability ?cap."
-						+ "?cap ds:sbjAuthority  ?sbjAuth. "
-						+ "?cap ds:objAuthority <"+oa+">. "
+						+ "?cap ds:sbjPrefix  ?sbjAuth. "
+						+ "?cap ds:objPrefix <"+oa+">. "
 						+ "FILTER REGEX (str(?sbjAuth),'"+sa+"')"
 						+ "}" ;
 			}
 			else if(!sa.equals("null") && oa.equals("null")) //and subject only is bound
 			{
-				queryString = "Prefix ds:<http://aksw.org/fedsum/> "
+				queryString = "Prefix ds:<http://aksw.org/quetsal/> "
 						+ "SELECT  Distinct ?sbjAuth "
 						+ " WHERE {?s ds:url <" + endPointUrl+">. "
 						+ " 		?s ds:capability ?cap."
-						+ "?cap ds:sbjAuthority  ?sbjAuth. "
+						+ "?cap ds:sbjPrefix  ?sbjAuth. "
 						+ "FILTER REGEX (str(?sbjAuth),'"+sa+"')"
 						+ "}" ;
 			}
 			else if(sa.equals("null") && !oa.equals("null")) //and object is  bound
 			{
-				queryString = "Prefix ds:<http://aksw.org/fedsum/> "
+				queryString = "Prefix ds:<http://aksw.org/quetsal/> "
 						+ "SELECT  Distinct ?sbjAuth "
 						+ " WHERE {?s ds:url <" + endPointUrl+">. "
 						+ " 		?s ds:capability ?cap."
-						+ "?cap ds:sbjAuthority  ?sbjAuth. "
-						+ "?cap ds:objAuthority <"+oa+">. "
+						+ "?cap ds:sbjPrefix  ?sbjAuth. "
+						+ "?cap ds:objPrefix <"+oa+">. "
 						+ "}" ;
 			}
 
@@ -1127,7 +1127,7 @@ public class TBSSSourceSelection {
 		//	{
 		//		if(p.startsWith("http://") || p.startsWith("ftp://")) // if predicate is bound. Note this needs to be properly validated using UrlValidator class may be. 
 		//		{
-		//		 queryString = "Prefix ds:<http://aksw.org/fedsum/> "
+		//		 queryString = "Prefix ds:<http://aksw.org/quetsal/> "
 		//			   		+ "SELECT DISTINCT  ?predAuth "
 		//				   	+ " WHERE {?s ds:url <" + endPointUrl+">. "
 		//					+ " 		?s ds:capability ?cap."
@@ -1139,7 +1139,7 @@ public class TBSSSourceSelection {
 		//		{
 		//			if(sa.equals("null") && oa.equals("null"))  //and subject , object are not bound
 		//			{
-		//				 queryString = "Prefix ds:<http://aksw.org/fedsum/> "
+		//				 queryString = "Prefix ds:<http://aksw.org/quetsal/> "
 		//					   		+ "SELECT  Distinct ?predAuth "
 		//						   	+ " WHERE {?s ds:url <" + endPointUrl+">. "
 		//							+ " 		?s ds:capability ?cap."
@@ -1147,33 +1147,33 @@ public class TBSSSourceSelection {
 		//			}
 		//			else if(!sa.equals("null") && !oa.equals("null")) //and subject, object are bound
 		//			{
-		//				 queryString = "Prefix ds:<http://aksw.org/fedsum/> "
+		//				 queryString = "Prefix ds:<http://aksw.org/quetsal/> "
 		//					   		+ "SELECT  Distinct ?predAuth "
 		//						   	+ " WHERE {?s ds:url <" + endPointUrl+">. "
 		//							+ " 		?s ds:capability ?cap."
 		//							         + "?cap ds:predicate ?predAuth. "
-		//							         + "?cap ds:objAuthority <"+oa+">. "
-		//							         + "?cap ds:sbjAuthority <"+sa+">. "
+		//							         + "?cap ds:objPrefix <"+oa+">. "
+		//							         + "?cap ds:sbjPrefix <"+sa+">. "
 		//					           + "}" ;
 		//			}
 		//			else if(sa.equals("null") && !oa.equals("null")) //and object only is bound
 		//			{
-		//				 queryString = "Prefix ds:<http://aksw.org/fedsum/> "
+		//				 queryString = "Prefix ds:<http://aksw.org/quetsal/> "
 		//					   		+ "SELECT  Distinct ?predAuth "
 		//						   	+ " WHERE {?s ds:url <" + endPointUrl+">. "
 		//							+ " 		?s ds:capability ?cap."
 		//							         + "?cap ds:predicate ?predAuth. "
-		//							         + "?cap ds:objAuthority <"+oa+">. "
+		//							         + "?cap ds:objPrefix <"+oa+">. "
 		//					           + "}" ;
 		//			}
 		//			else if(!sa.equals("null") && oa.equals("null")) //and subject is  bound
 		//			{
-		//				 queryString = "Prefix ds:<http://aksw.org/fedsum/> "
+		//				 queryString = "Prefix ds:<http://aksw.org/quetsal/> "
 		//					   		+ "SELECT  Distinct ?predAuth "
 		//						   	+ " WHERE {?s ds:url <" + endPointUrl+">. "
 		//							+ " 		?s ds:capability ?cap."
 		//							         + "?cap ds:predicate ?predAuth.  "
-		//							         + "?cap ds:sbjAuthority <"+sa+">. "
+		//							         + "?cap ds:sbjPrefix <"+sa+">. "
 		//							         + "}" ;
 		//			}
 		//		}
@@ -1183,52 +1183,52 @@ public class TBSSSourceSelection {
 		//	{
 		if(!p.equals("null") && !stmt.getPredicateVar().getName().equals(v.label)) // if predicate is bound
 		{
-			queryString = "Prefix ds:<http://aksw.org/fedsum/> "
+			queryString = "Prefix ds:<http://aksw.org/quetsal/> "
 					+ "SELECT DISTINCT  ?objAuth "
 					+ " WHERE {?s ds:url <" + endPointUrl+">. "
 					+ " 		?s ds:capability ?cap."
 					+ "        ?cap ds:predicate <"+p+">."
-					+ "?cap ds:objAuthority  ?objAuth. }" ;	
+					+ "?cap ds:objPrefix  ?objAuth. }" ;	
 		}
 		else //predicate is not bound
 		{
 			if(sa.equals("null") && oa.equals("null"))  //and subject , object are not bound
 			{
-				queryString = "Prefix ds:<http://aksw.org/fedsum/> "
+				queryString = "Prefix ds:<http://aksw.org/quetsal/> "
 						+ "SELECT  Distinct ?objAuth "
 						+ " WHERE {?s ds:url <" + endPointUrl+">. "
 						+ " 		?s ds:capability ?cap."
-						+ "?cap ds:objAuthority  ?objAuth. }" ;
+						+ "?cap ds:objPrefix  ?objAuth. }" ;
 			}
 			else if(!sa.equals("null") && !oa.equals("null")) //and subject, object are bound
 			{
-				queryString = "Prefix ds:<http://aksw.org/fedsum/> "
+				queryString = "Prefix ds:<http://aksw.org/quetsal/> "
 						+ "SELECT  Distinct ?objAuth "
 						+ " WHERE {?s ds:url <" + endPointUrl+">. "
 						+ " 		?s ds:capability ?cap."
-						+ "?cap ds:objAuthority  ?objAuth. "
-						+ "?cap ds:objAuthority <"+oa+">. "
+						+ "?cap ds:objPrefix  ?objAuth. "
+						+ "?cap ds:objPrefix <"+oa+">. "
 						+ "FILTER REGEX (str(?objAuth),'"+oa+"')"
 						+ "}" ;
 			}
 			else if(sa.equals("null") && !oa.equals("null")) //and object only is bound
 			{
-				queryString = "Prefix ds:<http://aksw.org/fedsum/> "
+				queryString = "Prefix ds:<http://aksw.org/quetsal/> "
 						+ "SELECT  Distinct ?objAuth "
 						+ " WHERE {?s ds:url <" + endPointUrl+">. "
 						+ " 		?s ds:capability ?cap."
-						+ "?cap ds:objAuthority  ?objAuth. "
+						+ "?cap ds:objPrefix  ?objAuth. "
 						+ "FILTER REGEX (str(?objAuth),'"+oa+"')"
 						+ "}" ;
 			}
 			else if(!sa.equals("null") && oa.equals("null")) //and subject is  bound
 			{
-				queryString = "Prefix ds:<http://aksw.org/fedsum/> "
+				queryString = "Prefix ds:<http://aksw.org/quetsal/> "
 						+ "SELECT  Distinct ?objAuth "
 						+ " WHERE {?s ds:url <" + endPointUrl+">. "
 						+ " 		?s ds:capability ?cap."
-						+ "?cap ds:objAuthority  ?objAuth. "
-						+ "?cap ds:sbjAuthority <"+sa+">. "
+						+ "?cap ds:objPrefix  ?objAuth. "
+						+ "?cap ds:sbjPrefix <"+sa+">. "
 						+ "}" ;
 			}
 

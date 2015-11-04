@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import org.aksw.simba.quetzal.core.TBSSSummariesGenerator;
+import org.aksw.simba.quetsal.util.TBSSSummariesGenerator;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.QueryEvaluationException;
 import org.openrdf.repository.RepositoryException;
@@ -28,23 +28,23 @@ public class GenerateTBSSSummaries {
 //			   "http://localhost:8080/openrdf-sesame/repositories/UOBM-univ8",
 //			   "http://localhost:8080/openrdf-sesame/repositories/UOBM-univ9"
 			 "http://localhost:8890/sparql",
-			  "http://localhost:8891/sparql",
-			 "http://localhost:8892/sparql",
-			 "http://localhost:8893/sparql",
-			 "http://localhost:8894/sparql",
-			 "http://localhost:8895/sparql",
-			 "http://localhost:8896/sparql",
-			 "http://localhost:8897/sparql",
-			 "http://localhost:8898/sparql"
+		  "http://localhost:8890/sparql"
+//			 "http://localhost:8892/sparql",
+//			 "http://localhost:8893/sparql",
+//			 "http://localhost:8894/sparql",
+//			 "http://localhost:8895/sparql",
+//			 "http://localhost:8896/sparql",
+//			 "http://localhost:8897/sparql",
+//			 "http://localhost:8898/sparql"
 //			// "http://localhost:8899/sparql"
 			));
 
     
-	String outputFile = "summaries\\quetzal-b10.n3";
+	String outputFile = "summaries/quetzal-testb10.n3";
 	String namedGraph = "http://aksw.org/fedbench/";  //can be null. in that case all graph will be considered 
 	TBSSSummariesGenerator generator = new TBSSSummariesGenerator(outputFile);
 	long startTime = System.currentTimeMillis();
-	int branchLimit =4;
+	int branchLimit =1;
 	generator.generateSummaries(endpoints,namedGraph,branchLimit);
 	System.out.println("Data Summaries Generation Time (min): "+ (System.currentTimeMillis()-startTime)/(1000*60));
 	System.out.print("Data Summaries are secessfully stored at "+ outputFile);

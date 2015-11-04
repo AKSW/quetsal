@@ -62,7 +62,7 @@ public class QuetzalConfig {
 	 */
 	public static void loadDataSources() throws Exception 
 	{
-		String queryString = "SELECT DISTINCT ?url WHERE {?s <http://aksw.org/fedsum/url> ?url }";
+		String queryString = "SELECT DISTINCT ?url WHERE {?s <http://aksw.org/quetsal/url> ?url }";
 		TupleQuery tupleQuery = con.prepareTupleQuery(QueryLanguage.SPARQL, queryString);
 		TupleQueryResult result = tupleQuery.evaluate();
 		while(result.hasNext())
@@ -124,7 +124,7 @@ public class QuetzalConfig {
 	public static void loadFedSummaries(String FedSummaries) {
 		File curfile = new File ("summaries/memorystore.data");
 		curfile.delete();
-		File fileDir = new File("summaries\\");
+		File fileDir = new File("summaries/");
 		Repository myRepository = new SailRepository( new MemoryStore(fileDir) );
 		try {
 			myRepository.initialize();

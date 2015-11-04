@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.aksw.simba.quetzal.configuration.QuetzalConfig;
 import org.aksw.simba.quetzal.core.HibiscusSourceSelection;
 import org.aksw.simba.quetzal.core.QueryRewriting;
@@ -20,9 +21,11 @@ import org.openrdf.query.TupleQueryResult;
 import org.openrdf.query.algebra.StatementPattern;
 import org.openrdf.query.parser.ParsedQuery;
 import org.openrdf.query.parser.QueryParser;
+import org.openrdf.query.parser.sparql.SPARQLParser;
 import org.openrdf.query.parser.sparql.SPARQLParserFactory;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.sparql.SPARQLRepository;
+
 import com.fluidops.fedx.FedX;
 import com.fluidops.fedx.FederationManager;
 import com.fluidops.fedx.algebra.StatementSource;
@@ -55,7 +58,9 @@ public class ExecuteHibiscusQuery {
 			System.out.println("-------------------------------------\n"+query);
 			long startTime = System.currentTimeMillis();
 			HibiscusSourceSelection sourceSelection = new HibiscusSourceSelection(members,cache, query);
-			HashMap<Integer, List<StatementPattern>> bgpGroups =  BGPGroupGenerator.generateBgpGroups(query);
+			SPARQLParser parser = new SPARQLParser();
+		     ParsedQuery parsedQuery = parser.parseQuery(query, null);
+			HashMap<Integer, List<StatementPattern>> bgpGroups =  BGPGroupGenerator.generateBgpGroups(parsedQuery);
 			Map<StatementPattern, List<StatementSource>> stmtToSources = sourceSelection.performSourceSelection(bgpGroups);
 			//  System.out.println(DNFgrps)
 			System.out.println("Source selection exe time (ms): "+ (System.currentTimeMillis()-startTime));

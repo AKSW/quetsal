@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import org.aksw.simba.quetzal.core.SummariesUpdate;
+import org.aksw.simba.quetsal.util.SummariesUpdate;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.QueryEvaluationException;
 import org.openrdf.repository.RepositoryException;

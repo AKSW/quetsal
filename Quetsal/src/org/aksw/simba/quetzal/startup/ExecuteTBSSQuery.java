@@ -1,12 +1,16 @@
 package org.aksw.simba.quetzal.startup;
 
+import  org.openrdf.queryrender.sparql.SPARQLQueryRenderer;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.aksw.simba.quetzal.configuration.QuetzalConfig;
 import org.aksw.simba.quetzal.core.QueryRewriting;
 import org.aksw.simba.quetzal.core.TBSSSourceSelection;
@@ -19,9 +23,11 @@ import org.openrdf.query.TupleQueryResult;
 import org.openrdf.query.algebra.StatementPattern;
 import org.openrdf.query.parser.ParsedQuery;
 import org.openrdf.query.parser.QueryParser;
+import org.openrdf.query.parser.sparql.SPARQLParser;
 import org.openrdf.query.parser.sparql.SPARQLParserFactory;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.sparql.SPARQLRepository;
+
 import com.fluidops.fedx.FedX;
 import com.fluidops.fedx.FederationManager;
 import com.fluidops.fedx.algebra.StatementSource;
@@ -34,9 +40,10 @@ import com.fluidops.fedx.structures.Endpoint;
  */
 public class ExecuteTBSSQuery {
 	public static void main(String[] args) throws Exception {
+		//queryRendererTest();		
 		long strtTime = System.currentTimeMillis();
-		String FedSummaries = "summaries/FedBench-TBSS-b4.n3";
-       //  String FedSummaries = "C://slices/Linked-SQ-DBpedia-Aidan.ttl";
+		String FedSummaries = "summaries/quetsal-Fedbench-b1.n3";
+		//  String FedSummaries = "C://slices/Linked-SQ-DBpedia-Aidan.ttl";
 		String mode = "ASK_dominant";  //{ASK_dominant, Index_dominant}
 		double commonPredThreshold = 0.33 ;  //considered a predicate as common predicate if it is presenet in 33% available data sources
 		QuetzalConfig.initialize(FedSummaries,mode,commonPredThreshold);  // must call this function only one time at the start to load configuration information. Please specify the FedSum mode. 
@@ -45,36 +52,65 @@ public class ExecuteTBSSQuery {
 		List<Endpoint> members = fed.getMembers();
 		Cache cache =FederationManager.getInstance().getCache();
 		List<String> queries = Queries.getFedBenchQueries();
+		//List<String> queries =  getQueriesFromDir("queries/");
 		SPARQLRepository repo = new SPARQLRepository(members.get(0).getEndpoint());
 		repo.initialize();
 		int tpsrces = 0; 
 		int count = 0;
 		for (String query : queries)
 		{
-			System.out.println("-------------------------------------\n"+query);
 			long startTime = System.currentTimeMillis();
 			TBSSSourceSelection sourceSelection = new TBSSSourceSelection(members,cache, query);
-			HashMap<Integer, List<StatementPattern>> bgpGroups =  BGPGroupGenerator.generateBgpGroups(query);
+			SPARQLParser parser = new SPARQLParser();
+			ParsedQuery parsedQuery = parser.parseQuery(query, null);
+			//SPARQLQueryRenderer renderer = new SPARQLQueryRenderer();  
+			//query =  renderer.render(parsedQuery);
+			System.out.println("-------------------------------------\n"+query);
+			HashMap<Integer, List<StatementPattern>> bgpGroups =  BGPGroupGenerator.generateBgpGroups(parsedQuery);
 			Map<StatementPattern, List<StatementSource>> stmtToSources = sourceSelection.performSourceSelection(bgpGroups);
 			//  System.out.println(DNFgrps)
 			System.out.println("Source selection exe time (ms): "+ (System.currentTimeMillis()-startTime));
 
-						for (StatementPattern stmt : stmtToSources.keySet()) 
-						{
-							tpsrces = tpsrces+ stmtToSources.get(stmt).size();
-							//System.out.println("-----------\n"+stmt);
-							//System.out.println(stmtToSources.get(stmt));
-						}
+			for (StatementPattern stmt : stmtToSources.keySet()) 
+			{
+				tpsrces = tpsrces+ stmtToSources.get(stmt).size();
+				//System.out.println("-----------\n"+stmt);
+				//System.out.println(stmtToSources.get(stmt));
+			}
 
-	    //    count =  executeQuery(query,bgpGroups,stmtToSources,repo);
+		//	count =  executeQuery(query,bgpGroups,stmtToSources,repo);    //You can uncomment this if you want to execute the query as well. 
 			System.out.println(": Query execution time (msec):"+ (System.currentTimeMillis()-startTime));
 			System.out.println("Total results: " + count);
 			Thread.sleep(1000);
 
 		}	
-		System.out.println("NetTriple pattern-wise selected sources after step 2 of HIBISCuS source selection : "+ tpsrces);
+		System.out.println("NetTriple pattern-wise selected sources: "+ tpsrces);
 		FederationManager.getInstance().shutDown();
 		System.exit(0);
+	}
+
+	@SuppressWarnings("unused")
+	private static void queryRendererTest() throws Exception {
+		String queryStr = "PREFIX abc: <http://aksw.org/> SELECT * { SERVICE SILENT <http://foo> { abc:pqr ?p ?o } }";
+		SPARQLParser parser = new SPARQLParser();
+		ParsedQuery query1 = parser.parseQuery(queryStr, null);
+		System.out.println(query1);
+		SPARQLQueryRenderer renderer = new SPARQLQueryRenderer();  
+		String  roundtrip =  renderer.render(query1);
+		System.out.println("Roundtrip: " + roundtrip);
+
+	}
+	@SuppressWarnings("unused")
+	private static List<String> getQueriesFromDir(String inputDirectory) throws IOException {
+		List<String> queries = new ArrayList<String> ();
+		File dir = new File(inputDirectory);
+		File[] listOfQueries = dir.listFiles();
+		for (File query : listOfQueries)
+		{
+			String queryStry = getQuery(query);	
+			queries.add(queryStry);
+		}
+		return queries;
 	}
 	/**
 	 * Execute query and return the number of results
@@ -89,16 +125,16 @@ public class ExecuteTBSSQuery {
 	 */
 	public static int executeQuery(String query, HashMap<Integer, List<StatementPattern>> bgpGroups, Map<StatementPattern, List<StatementSource>> stmtToSources, SPARQLRepository repo) throws RepositoryException, MalformedQueryException, QueryEvaluationException {
 		String newQuery = QueryRewriting.doQueryRewriting(query,bgpGroups,stmtToSources);
-		//	System.out.println(newQuery);
-			TupleQuery tupleQuery = repo.getConnection().prepareTupleQuery(QueryLanguage.SPARQL, newQuery); 
-			int count = 0;
-			TupleQueryResult result = tupleQuery.evaluate();
-			while(result.hasNext())
-			{
-				//System.out.println(result.next());
-				result.next();
-				count++;
-			}
+			System.out.println(newQuery);
+		TupleQuery tupleQuery = repo.getConnection().prepareTupleQuery(QueryLanguage.SPARQL, newQuery); 
+		int count = 0;
+		TupleQueryResult result = tupleQuery.evaluate();
+		while(result.hasNext())
+		{
+			//System.out.println(result.next());
+			result.next();
+			count++;
+		}
 
 		return count;
 	}

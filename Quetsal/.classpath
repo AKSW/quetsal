@@ -13,8 +13,9 @@
 	<classpathentry kind="lib" path="D:/workspace/Quetsal/lib/jackson-core-2.3.3.jar"/>
 	<classpathentry kind="lib" path="D:/workspace/Quetsal/lib/jackson-databind-2.3.3.jar"/>
 	<classpathentry kind="lib" path="D:/workspace/Quetsal/lib/log4j-1.2.16.jar"/>
-	<classpathentry kind="lib" path="D:/workspace/Quetsal/lib/openrdf-sesame-2.7.14-onejar.jar"/>
 	<classpathentry kind="lib" path="D:/workspace/Quetsal/lib/slf4j-api-1.5.2.jar"/>
 	<classpathentry kind="lib" path="D:/workspace/Quetsal/lib/slf4j-log4j12-1.5.2.jar"/>
+	<classpathentry kind="lib" path="D:/workspace/Quetsal/lib/colt-1.0.3.jar"/>
+	<classpathentry kind="lib" path="D:/workspace/Quetsal/lib/openrdf-sesame-2.7.14-onejar.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -3,7 +3,8 @@ package org.aksw.simba.quetzal.startup;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import org.aksw.simba.quetzal.core.HibiscusSummariesGenerator;
+
+import org.aksw.simba.quetsal.util.HibiscusSummariesGenerator;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.QueryEvaluationException;
 import org.openrdf.repository.RepositoryException;
