@@ -9,8 +9,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import org.aksw.simba.quetzal.core.TBSSSourceSelection;
-import org.aksw.simba.quetzal.datastructues.Trie;
+
+import org.aksw.simba.quetsal.core.TBSSSourceSelection;
+import org.aksw.simba.quetsal.datastructues.Trie;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.QueryEvaluationException;
 import org.openrdf.query.QueryLanguage;
