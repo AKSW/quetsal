@@ -10,9 +10,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.aksw.simba.quetsal.configuration.QuetzalConfig;
+import org.aksw.simba.quetsal.core.Cardinality;
 import org.aksw.simba.quetsal.core.QueryRewriting;
+import org.aksw.simba.quetsal.core.SourceRanking;
 import org.aksw.simba.quetsal.core.TBSSSourceSelection;
 import org.aksw.sparql.query.algebra.helpers.BGPGroupGenerator;
 import org.openrdf.query.MalformedQueryException;
@@ -57,6 +60,7 @@ public class ExecuteTBSSQuery {
 		repo.initialize();
 		int tpsrces = 0; 
 		int count = 0;
+		int k = 9; 
 		for (String query : queries)
 		{
 			long startTime = System.currentTimeMillis();
@@ -68,17 +72,22 @@ public class ExecuteTBSSQuery {
 			System.out.println("-------------------------------------\n"+query);
 			HashMap<Integer, List<StatementPattern>> bgpGroups =  BGPGroupGenerator.generateBgpGroups(parsedQuery);
 			Map<StatementPattern, List<StatementSource>> stmtToSources = sourceSelection.performSourceSelection(bgpGroups);
+			Map<StatementPattern, List<StatementSource>> rankedStmtToSources =  new ConcurrentHashMap<StatementPattern, List<StatementSource>>();
 			//  System.out.println(DNFgrps)
 			System.out.println("Source selection exe time (ms): "+ (System.currentTimeMillis()-startTime));
-
+          // long rnktime = System.currentTimeMillis();
 			for (StatementPattern stmt : stmtToSources.keySet()) 
 			{
 				tpsrces = tpsrces+ stmtToSources.get(stmt).size();
 				//System.out.println("-----------\n"+stmt);
-				//System.out.println(stmtToSources.get(stmt));
+				//System.out.println("\n--Random-\n"+stmtToSources.get(stmt));
+				//System.out.println("Cardinaltiy: " +Cardinality.getTriplePatternCardinality(stmt, stmtToSources.get(stmt)));
+			List<StatementSource>	rankedSrces = SourceRanking.getRankedTriplePatternSources(stmt, stmtToSources.get(stmt), k);
+			rankedStmtToSources.put(stmt, rankedSrces) ;
+			//System.out.println("\n--Ranked-\n"+rankedSrces);
 			}
-
-		//	count =  executeQuery(query,bgpGroups,stmtToSources,repo);    //You can uncomment this if you want to execute the query as well. 
+			//System.out.println("Source Ranking time (msec):"+ (System.currentTimeMillis()-rnktime));
+		//	count =  executeQuery(query,bgpGroups,rankedStmtToSources,repo);    //You can uncomment this if you want to execute the query as well. 
 			System.out.println(": Query execution time (msec):"+ (System.currentTimeMillis()-startTime));
 			System.out.println("Total results: " + count);
 			Thread.sleep(1000);
@@ -125,7 +134,7 @@ public class ExecuteTBSSQuery {
 	 */
 	public static int executeQuery(String query, HashMap<Integer, List<StatementPattern>> bgpGroups, Map<StatementPattern, List<StatementSource>> stmtToSources, SPARQLRepository repo) throws RepositoryException, MalformedQueryException, QueryEvaluationException {
 		String newQuery = QueryRewriting.doQueryRewriting(query,bgpGroups,stmtToSources);
-			System.out.println(newQuery);
+		//	System.out.println(newQuery);
 		TupleQuery tupleQuery = repo.getConnection().prepareTupleQuery(QueryLanguage.SPARQL, newQuery); 
 		int count = 0;
 		TupleQueryResult result = tupleQuery.evaluate();

@@ -122,7 +122,7 @@ public class Queries {
 		queries.add(CD3);
 		queries.add(CD4);
 		queries.add(CD5);
-		queries.add(CD6);
+		//queries.add(CD6);
 		queries.add(CD7);
 		queries.add(LS1);
 		queries.add(LS2);

@@ -349,7 +349,7 @@ public class TBSSSourceSelection {
 	 * @param oa Object authority
 	 * @throws QueryEvaluationException Query Error
 	 * @throws MalformedQueryException  Memory Error
-	 * @throws RepositoryException  Repository Erro
+	 * @throws RepositoryException  Repository Error
 	 */
 	public void FedSumLookup(StatementPattern stmt, String sa, String p, String oa) throws QueryEvaluationException, RepositoryException, MalformedQueryException {
 		String  queryString = getFedSumLookupQuery(sa,p,oa) ;
