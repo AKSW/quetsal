@@ -56,8 +56,8 @@ public class Queries {
 		String CD6 = "SELECT ?name ?location WHERE {\n"+ //cd 6
 				"?artist <http://xmlns.com/foaf/0.1/name> ?name .\n"+
 				"?artist <http://xmlns.com/foaf/0.1/based_near> ?location .\n"+
-				"?location <http://www.geonames.org/ontology#parentFeature> ?germany . \n"+
-				"?germany <http://www.geonames.org/ontology#name> \"Federal Republic of Germany\" . \n"+
+				"?location <http://www.geonames.org/ontology#parentFeature> ?germany .\n"+
+				"?germany <http://www.geonames.org/ontology#name> \"Federal Republic of Germany\" .\n"+
 				"}";
 		String CD7= "SELECT ?location ?news WHERE {\n"+ //cd7
 				"?location <http://www.geonames.org/ontology#parentFeature> ?parent .\n"+ 
@@ -116,21 +116,110 @@ public class Queries {
 				"	  ?keggDrug <http://bio2rdf.org/ns/bio2rdf#mass> ?mass . \n"+
 				"	} "+
 				"}";
-
-		queries.add(CD1);
-		queries.add(CD2);
-		queries.add(CD3);
-		queries.add(CD4);
-		queries.add(CD5);
-		//queries.add(CD6);
-		queries.add(CD7);
-		queries.add(LS1);
-		queries.add(LS2);
-		queries.add(LS3);
-		queries.add(LS4);
-		queries.add(LS5);
-		queries.add(LS6);
-		queries.add(LS7);
+		//------------------------------------ld-----------------------------------
+				String ld1 = "SELECT * WHERE { \n"+
+						"?paper <http://data.semanticweb.org/ns/swc/ontology#isPartOf> <http://data.semanticweb.org/conference/iswc/2008/poster_demo_proceedings> .\n"+
+						"?paper <http://swrc.ontoware.org/ontology#author> ?p .\n"+
+						"?p <http://www.w3.org/2000/01/rdf-schema#label> ?n .\n"+
+						"}";
+				//queries.add(ld1);
+				String ld2 = "SELECT * WHERE {\n" +
+						"?proceedings <http://data.semanticweb.org/ns/swc/ontology#relatedToEvent> <http://data.semanticweb.org/conference/eswc/2010> .\n" +
+						"?paper <http://data.semanticweb.org/ns/swc/ontology#isPartOf> ?proceedings .\n" +
+						"?paper <http://swrc.ontoware.org/ontology#author> ?p .\n" +
+						"}";
+				//queries.add(ld2);
+				String ld3 ="SELECT * WHERE {\n" +
+						"?paper <http://data.semanticweb.org/ns/swc/ontology#isPartOf> <http://data.semanticweb.org/conference/iswc/2008/poster_demo_proceedings> .\n" +
+						"?paper <http://swrc.ontoware.org/ontology#author> ?p .\n" +
+						"?p <http://www.w3.org/2002/07/owl#sameAs> ?x .\n" +
+						"?p <http://www.w3.org/2000/01/rdf-schema#label> ?n .\n" +
+						"}";
+				//queries.add(ld3);
+				String ld4 = "SELECT * WHERE {\n" +
+						"?role <http://data.semanticweb.org/ns/swc/ontology#isRoleAt> <http://data.semanticweb.org/conference/eswc/2010> .\n" +
+						"?role <http://data.semanticweb.org/ns/swc/ontology#heldBy> ?p .\n" +
+						"?paper <http://swrc.ontoware.org/ontology#author> ?p .\n" +
+						"?paper <http://data.semanticweb.org/ns/swc/ontology#isPartOf> ?proceedings .\n" +
+						"?proceedings <http://data.semanticweb.org/ns/swc/ontology#relatedToEvent> <http://data.semanticweb.org/conference/eswc/2010> .\n" +
+						"}";
+				//queries.add(ld4);
+				String ld5 = "SELECT * WHERE {\n" +
+						"?a <http://dbpedia.org/ontology/artist> <http://dbpedia.org/resource/Michael_Jackson> .\n" +
+						"?a <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/Album> .\n" +
+						"?a <http://xmlns.com/foaf/0.1/name> ?n .\n" +
+						"}";
+				//queries.add(ld5);
+				String ld6 = 	"SELECT * WHERE {\n" +
+						"?director <http://dbpedia.org/ontology/nationality> <http://dbpedia.org/resource/Italy> .\n" +
+						"?film <http://dbpedia.org/ontology/director> ?director .\n" +
+						"?x <http://www.w3.org/2002/07/owl#sameAs> ?film .\n" +
+						"?x <http://xmlns.com/foaf/0.1/based_near> ?y .\n" +
+						"?y <http://www.geonames.org/ontology#officialName> ?n .\n" +
+						"}";
+				//queries.add(ld6);
+				String ld7 = "SELECT * WHERE {\n" +
+						"?x <http://www.geonames.org/ontology#parentFeature> <http://sws.geonames.org/2921044/> .\n" +
+						"?x <http://www.geonames.org/ontology#name> ?n .\n" +
+						"}";
+				//queries.add(ld7);
+				String ld8 = 
+						"SELECT * WHERE {\n" +
+						"?drug <http://www4.wiwiss.fu-berlin.de/drugbank/resource/drugbank/drugCategory> <http://www4.wiwiss.fu-berlin.de/drugbank/resource/drugcategory/micronutrient> .\n" +
+						"?drug <http://www4.wiwiss.fu-berlin.de/drugbank/resource/drugbank/casRegistryNumber> ?id .\n" +
+						"?drug <http://www.w3.org/2002/07/owl#sameAs> ?s .\n" +
+						"?s <http://xmlns.com/foaf/0.1/name> ?o .\n" +
+						"?s <http://www.w3.org/2004/02/skos/core#subject> ?sub .\n" +
+						"}";
+				//queries.add(ld8);
+				String ld9 =
+						"SELECT * WHERE {\n" +
+						"?x <http://www.w3.org/2004/02/skos/core#subject> <http://dbpedia.org/resource/Category:FIFA_World_Cup-winning_countries> .\n" +
+						"?p <http://dbpedia.org/ontology/managerClub> ?x .\n" +
+						"?p <http://xmlns.com/foaf/0.1/name> \"Luiz Felipe Scolari\"@en . \n" +
+						"}";
+				//queries.add(ld9);
+				String ld10 = 
+						"SELECT * WHERE {\n" +
+						"?n <http://www.w3.org/2004/02/skos/core#subject> <http://dbpedia.org/resource/Category:Chancellors_of_Germany> .\n" +
+						"?n <http://www.w3.org/2002/07/owl#sameAs> ?p2 .\n" +
+						"?p2 <http://data.nytimes.com/elements/latest_use> ?u .\n" +
+						"}";
+				//queries.add(ld10);
+				String ld11 =
+						"SELECT * WHERE {\n" +
+						"?x <http://dbpedia.org/ontology/team> <http://dbpedia.org/resource/Eintracht_Frankfurt> .\n" +
+						"?x <http://www.w3.org/1999/02/22-rdf-syntax-ns#label> ?y .\n" +
+						"?x <http://dbpedia.org/ontology/birthDate> ?d .\n" +
+						"?x <http://dbpedia.org/ontology/birthPlace> ?p .\n" +
+						"?p <http://www.w3.org/1999/02/22-rdf-syntax-ns#label> ?l .\n" +
+						"} ";
+//		queries.add(CD1);
+//		queries.add(CD2);
+//		queries.add(CD3);
+//		queries.add(CD4);
+//		queries.add(CD5);
+		queries.add(CD6);
+//		queries.add(CD7);
+//		queries.add(LS1);
+//		queries.add(LS2);
+//		queries.add(LS3);
+//		queries.add(LS4);
+		//queries.add(LS5);
+//		queries.add(LS6);
+//		queries.add(LS7);
+//		queries.add(ld1);
+//		queries.add(ld2);
+//		queries.add(ld3);
+//		queries.add(ld4);
+//		queries.add(ld5);
+//		queries.add(ld6);
+//		queries.add(ld7);
+//		queries.add(ld8);
+//		queries.add(ld9);
+//		queries.add(ld10);
+//		queries.add(ld11);
+		
 		return queries;
 	}
 

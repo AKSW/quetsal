@@ -286,7 +286,7 @@ public class TBSSSourceSelection {
 		if (triplePatternWiseSources>tp)
 			stmtToSources =  pruneSources(DNFHyperVertices);
 		else
-			System.out.println("Total Triple pattern-wise selected sources after step 2 of Quetzal source selection : "+ triplePatternWiseSources);
+			System.out.println("Total Triple pattern-wise selected sources: "+ triplePatternWiseSources);
 
 		return stmtToSources;
 	}
@@ -539,7 +539,7 @@ public class TBSSSourceSelection {
 					//---------------------------------------hybrid node-------------------------------------------------------------
 					if((v.inEdges.size()>1 && v.outEdges.size()>0) || (v.inEdges.size()>0 && v.outEdges.size()>1)) 
 					{
-						System.out.println(v.label + " is hybrid node");
+						//System.out.println(v.label + " is hybrid node");
 						for(HyperEdge inEdge: v.inEdges) //has hyperedges or statement patterns
 						{
 							Map<StatementSource, ArrayList<String>> stmtSourceToAuthorities = new HashMap<StatementSource, ArrayList<String>> ();
