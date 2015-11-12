@@ -60,7 +60,7 @@ public class ExecuteTBSSQuery {
 		repo.initialize();
 		int tpsrces = 0; 
 		int count = 0;
-		int k = 1; 
+		int k = 1; //top-k sources. k=1 means only one  source be selected per triple pattern
 		for (String query : queries)
 		{
 			System.out.println("-------------------------------------\n"+query);
