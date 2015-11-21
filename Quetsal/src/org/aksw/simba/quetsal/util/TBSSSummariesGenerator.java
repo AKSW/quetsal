@@ -9,9 +9,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
 import org.aksw.simba.quetsal.core.TBSSSourceSelection;
 import org.aksw.simba.quetsal.datastructues.Trie;
+import org.aksw.simba.quetsal.synopsis.ArrayCollection;
+import org.aksw.simba.quetsal.synopsis.Collection;
+import org.aksw.simba.quetsal.synopsis.MIPsynopsis;
+import org.openrdf.query.BindingSet;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.QueryEvaluationException;
 import org.openrdf.query.QueryLanguage;
@@ -20,6 +23,7 @@ import org.openrdf.query.TupleQueryResult;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.sparql.SPARQLRepository;
 
+
 /**
  *  Generate Quetzal-TBSS Summaries for a set of federation members (SPARQL endpoints)
  *  @author saleem
@@ -27,6 +31,7 @@ import org.openrdf.repository.sparql.SPARQLRepository;
 public class TBSSSummariesGenerator {
 	public static  BufferedWriter bw ;
 	public static double distinctSbj;
+	public static long trplCount ;
 	/**
 	 * initialize input information for data summaries generation
 	 * @param location Directory location of the resulting FedSummaries file (i.e. location/FedSum.n3)
@@ -40,36 +45,28 @@ public class TBSSSummariesGenerator {
 	}
 	public static void main(String[] args) throws IOException, RepositoryException, MalformedQueryException, QueryEvaluationException {
 		List<String> endpoints = 	(Arrays.asList(
-				//			   "http://localhost:8080/openrdf-sesame/repositories/UOBM-univ0",
-				//			   "http://localhost:8080/openrdf-sesame/repositories/UOBM-univ1",
-				//			   "http://localhost:8080/openrdf-sesame/repositories/UOBM-univ2",
-				//			   "http://localhost:8080/openrdf-sesame/repositories/UOBM-univ3",
-				//			   "http://localhost:8080/openrdf-sesame/repositories/UOBM-univ4",
-				//			   "http://localhost:8080/openrdf-sesame/repositories/UOBM-univ5",
-				//			   "http://localhost:8080/openrdf-sesame/repositories/UOBM-univ6",
-				//			   "http://localhost:8080/openrdf-sesame/repositories/UOBM-univ7",
-				//			   "http://localhost:8080/openrdf-sesame/repositories/UOBM-univ8",
-				//			   "http://localhost:8080/openrdf-sesame/repositories/UOBM-univ9"
-//			         	      "http://localhost:8890/sparql",
-//							  "http://localhost:8891/sparql",
-//							 "http://localhost:8892/sparql",
-//							 "http://localhost:8893/sparql",
-//							 "http://localhost:8894/sparql",
-//							 "http://localhost:8895/sparql",
-//							 "http://localhost:8896/sparql",
-//							 "http://localhost:8897/sparql",
-							 "http://localhost:8898/sparql"
-							// "http://localhost:8899/sparql"
+				//			         	      "http://localhost:8890/sparql",
+											  "http://localhost:8891/sparql"
+				//							 "http://localhost:8892/sparql",
+				//							 "http://localhost:8893/sparql",
+				//							 "http://localhost:8894/sparql",
+				//							 "http://localhost:8895/sparql",
+				//							 "http://localhost:8896/sparql",
+				//							 "http://localhost:8897/sparql",
+				//"http://localhost:8898/sparql"
+				// "http://localhost:8899/sparql"
 				));
 
 
-		String outputFile = "summaries/quetsal-Fedbench-8898-b4.n3";
-		String namedGraph = "http://aksw.org/fedbench/";  //can be null. in that case all graph will be considered 
+		String outputFile = "summaries/quetsal-daw-test-b4.n3";
+	//	String namedGraph = "http://aksw.org/fedbench/";  //can be null. in that case all graph will be considered 
+		String namedGraph = null;
 		TBSSSummariesGenerator generator = new TBSSSummariesGenerator(outputFile);
 		long startTime = System.currentTimeMillis();
 		int branchLimit =4;
-		generator.generateSummaries(endpoints,namedGraph,branchLimit);
-		System.out.println("Data Summaries Generation Time (min): "+ (System.currentTimeMillis()-startTime)/(1000*60));
+		//generator.generateSummaries(endpoints,namedGraph,branchLimit);
+		generator.generateDAWSummaries(endpoints,namedGraph,branchLimit, 0.5);
+		System.out.println("Data Summaries Generation Time (min): "+ (double)(System.currentTimeMillis()-startTime)/(1000*60));
 		System.out.print("Data Summaries are secessfully stored at "+ outputFile);
 
 		//	outputFile = "summaries\\quetzal-b2.n3";
@@ -127,6 +124,70 @@ public class TBSSSummariesGenerator {
 				bw.append("         [");
 				bw.newLine();
 				bw.append("           ds:predicate  <"+lstPred.get(i)+"> ;");
+				writeSbjPrefixes(lstPred.get(i),endpoint,graph,branchLimit);
+				long trpleCount = getTripleCount(lstPred.get(i),endpoint);
+				if(distinctSbj==0)
+					distinctSbj=trpleCount;
+				bw.append("\n           ds:avgSbjSelectivity  "+ (1/distinctSbj)+" ;");
+				totalSbj = (long) (totalSbj+distinctSbj);
+				writeObjPrefixes(lstPred.get(i),endpoint,graph,branchLimit);
+				double distinctObj = getObj(lstPred.get(i),endpoint);
+				bw.append("\n           ds:avgObjSelectivity  "+ (1/distinctObj)+" ;");
+				totalObj = (long) (totalObj+distinctObj);
+				bw.newLine();
+				bw.append("           ds:triples    "+trpleCount+" ;");
+				bw.append("         ] ;");
+				bw.newLine();
+				totalTrpl = totalTrpl+trpleCount;
+			}
+			bw.append("     ds:totalSbj "+totalSbj+" ; \n");  // this is not representing the actual number of distinct subjects in a datasets since the same subject URI can be shaared by more than one predicate. but we keep this to save time.  
+			bw.append("     ds:totalObj "+totalObj+" ; \n");  
+			bw.append("     ds:totalTriples "+totalTrpl+" ; \n");
+			bw.newLine();
+			bw.append("             .");
+			bw.newLine();
+
+		}
+		//     bw.append("     sd:totalTriples \""+totalTrpl+"\" ;");
+		bw.append("#---------End---------");
+		bw.close();
+	}
+
+	/**
+	 * Build Duplicate-aware Quetzal data summaries for the given list of SPARQL endpoints
+	 * @param endpoints List of SPARQL endpoints url
+	 * @param graph Named graph. Can be null. In this case all named graphs will be considered for Quetzal summaries
+	 * @param branchLimit Branching limit
+	 * @param d Size of MIPS vector can be fixed, e.g., 64 or in percentage, e.g. 0.10 mean the size is the 10% of the ds:triples in dataset capabilities 
+	 * @throws IOException Io Error
+	 * @throws QueryEvaluationException Query Execution Error 
+	 * @throws MalformedQueryException  Memory Error
+	 * @throws RepositoryException  Repository Error
+	 */
+	public void generateDAWSummaries(List<String> endpoints, String graph, int branchLimit, double d) throws IOException, RepositoryException, MalformedQueryException, QueryEvaluationException{
+		for(String endpoint:endpoints)
+		{
+			System.out.println("generating summaries for: " + endpoint);
+			long totalTrpl=0, totalSbj=0, totalObj=0;
+			String MIPsV ="";
+			ArrayList<String> lstPred = getPredicates(endpoint,graph);
+			System.out.println("total distinct predicates: "+ lstPred.size());
+			bw.append("#---------------------"+endpoint+" Summaries-------------------------------");
+			bw.newLine();
+			bw.append("[] a ds:Service ;");
+			bw.newLine();
+			bw.append("     ds:url   <"+endpoint+"> ;");
+			bw.newLine();
+			for(int i =0 ;i<lstPred.size();i++)
+			{
+				System.out.println((i+1)+" in progress: " + lstPred.get(i));
+				bw.append("     ds:capability");
+				bw.newLine();
+				bw.append("         [");
+				bw.newLine();
+				bw.append("           ds:predicate  <"+lstPred.get(i)+"> ;");
+				MIPsV= getMIPsV(lstPred.get(i),endpoint,d);
+				bw.append("\n           ds:MIPv       \""+MIPsV+"\" ;");
 				writeSbjPrefixes(lstPred.get(i),endpoint,graph,branchLimit);
 				long trpleCount = getTripleCount(lstPred.get(i),endpoint);
 				if(distinctSbj==0)
@@ -544,6 +605,62 @@ public class TBSSSummariesGenerator {
 
 		return query;
 	}
+	//-----------------------Return Mean wise independent permutation vector (MIPsV) for a predicate-------------	
+	/**
+	 * Generate Mean wise independent permutation vector (MIPsV) for a predicate
+	 * @param pred Predicate name
+	 * @param endpoint SPARQL endpoint URL
+	 * @param d MipsVector Size can be fixed  e.g. 64 or in percentage e.g., 0.10 means 10%
+	 * @return MIPsV Mips Vector
+	 * @throws RepositoryException 
+	 * @throws MalformedQueryException 
+	 * @throws QueryEvaluationException 
+	 */
+	private static String getMIPsV(String pred, String endpoint, double d) throws IOException, RepositoryException, MalformedQueryException, QueryEvaluationException
+	{
+		ArrayList<Long> idsVector = new ArrayList<Long>() ;
+		String MIPsV = "";
+		String strQuery = getMIPsVQury(pred);
+		SPARQLRepository repo = new SPARQLRepository(endpoint);
+		repo.initialize();
+		TupleQuery query = repo.getConnection().prepareTupleQuery(QueryLanguage.SPARQL, strQuery); 
+		TupleQueryResult rs = query.evaluate();
+		while( rs.hasNext() ) 
+		{
+			BindingSet bset = rs.next();
+			String sbj_obj = bset.getBinding("s").getValue().toString().concat( bset.getBinding("o").getValue().toString());
+			idsVector.add((long) (sbj_obj.hashCode()));
+		}
+		trplCount = idsVector.size();
+		Collection c = new ArrayCollection(idsVector);
+		MIPsynopsis  synMIPs=null;
+		if(d >=1)
+			 synMIPs= new MIPsynopsis(c, (int) d, 242); 
+		else
+		    synMIPs= new MIPsynopsis(c, (int) (Math.ceil(trplCount*d)), 242); 
+		
+		long[] minValues = synMIPs.minValues;
+		for(int i=0;i<minValues.length;i++)
+			MIPsV = MIPsV.concat(minValues[i]+" ");
+
+		return MIPsV.trim();
+	}
+	//--------------------------------------------------------------------------
+	/**
+	 * Get query for MIPs Vectory generation
+	 * @param pred Predicate name for which MIPs vector is required
+	 */
+	private static String getMIPsVQury(String pred) 
+	{
+		String MIPsVQuery = "SELECT   ?s  ?o " + // 
+				"WHERE " +
+				"{" +
+
+				               		"?s <"+pred+"> ?o " +
+				               		"} " ;
+		return MIPsVQuery;
+	}
+
 	/**
 	 * Get Predicate List
 	 * @param endPointUrl SPARQL endPoint Url

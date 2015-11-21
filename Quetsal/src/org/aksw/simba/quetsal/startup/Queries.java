@@ -194,12 +194,12 @@ public class Queries {
 						"?x <http://dbpedia.org/ontology/birthPlace> ?p .\n" +
 						"?p <http://www.w3.org/1999/02/22-rdf-syntax-ns#label> ?l .\n" +
 						"} ";
-//		queries.add(CD1);
-//		queries.add(CD2);
+		queries.add(CD1);
+		queries.add(CD2);
 //		queries.add(CD3);
 //		queries.add(CD4);
 //		queries.add(CD5);
-		queries.add(CD6);
+//		queries.add(CD6);
 //		queries.add(CD7);
 //		queries.add(LS1);
 //		queries.add(LS2);
@@ -213,12 +213,12 @@ public class Queries {
 //		queries.add(ld3);
 //		queries.add(ld4);
 //		queries.add(ld5);
-//		queries.add(ld6);
-//		queries.add(ld7);
+		queries.add(ld6);
+	//	queries.add(ld7);
 //		queries.add(ld8);
 //		queries.add(ld9);
 //		queries.add(ld10);
-//		queries.add(ld11);
+	//	queries.add(ld11);
 		
 		return queries;
 	}
